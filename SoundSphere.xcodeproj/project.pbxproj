@@ -11,11 +11,9 @@
 		D18DBCF42D26047E00D40006 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D18DBCF32D26047E00D40006 /* FirebaseAuth */; };
 		D18DBCF62D26047E00D40006 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = D18DBCF52D26047E00D40006 /* FirebaseCore */; };
 		D18DBCFA2D2604AE00D40006 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D18DBCF92D2604AE00D40006 /* FirebaseFirestore */; };
-		D18DBD102D281C8100D40006 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D18DBD0F2D281C8100D40006 /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D18DBD0F2D281C8100D40006 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D1DDA5452CE0D777004B72E1 /* SoundSphere.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoundSphere.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,7 +43,6 @@
 		D1DDA53C2CE0D777004B72E1 = {
 			isa = PBXGroup;
 			children = (
-				D18DBD0F2D281C8100D40006 /* .gitignore */,
 				D1DDA5472CE0D777004B72E1 /* SoundSphere */,
 				D1DDA56E2CE118F0004B72E1 /* Frameworks */,
 				D1DDA5462CE0D777004B72E1 /* Products */,
@@ -138,7 +135,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D18DBD102D281C8100D40006 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
