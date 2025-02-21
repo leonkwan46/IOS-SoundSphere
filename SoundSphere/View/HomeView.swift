@@ -22,11 +22,11 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
                 
-                if userViewModel.user?.role == .teacher {
+                if userViewModel.user?.userType == .teacher {
                     NavigationLink(destination: TeacherHomeView()) {
                         Text("Teacher Home")
                     }
-                } else if userViewModel.user?.role == .student {
+                } else if userViewModel.user?.userType == .student {
                     NavigationLink(destination: StudentHomeView()) {
                         Text("Student Home")
                     }

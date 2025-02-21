@@ -7,7 +7,7 @@
 import Foundation
 import FirebaseAuth
 
-enum UserRole: String, Decodable {
+enum UserType: String, Decodable {
     case student = "student"
     case teacher = "teacher"
     case admin = "admin"
@@ -16,7 +16,7 @@ enum UserRole: String, Decodable {
 struct User: Decodable {
     let id: Int
     let email: String
-    let role: UserRole
+    let userType: UserType
     let isActive: Bool
     let isDeleted: Bool
 }
