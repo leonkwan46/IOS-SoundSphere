@@ -65,7 +65,7 @@ class userApi {
             }
         }
     }
-    
+
     func updateUserDetails(username: String, firstName: String, lastName: String, age: Int, gender: String) async throws -> Bool {
         let idToken = try await getIDToken()
 
