@@ -19,10 +19,17 @@ enum UserError: Error {
 }
 
 class userApi {
-    func getUserData() async throws -> User {
+    private func getIDToken() async throws -> String {
+        guard let currentUser = Auth.auth().currentUser else {
+            throw NSError(domain: "AuthError", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is signed in"])
+        }
+        return try await currentUser.getIDToken()
+    }
+    
+    func fetchUserData() async throws -> User {
         let idToken = try await getIDToken()
 
-        guard let url = URL(string: "http://localhost:3000/users/user-data") else {
+        guard let url = URL(string: "http://localhost:3000/users/get-user-data") else {
             throw URLError(.badURL)
         }
         
@@ -58,15 +65,7 @@ class userApi {
             }
         }
     }
-    
-    func getIDToken() async throws -> String {
-        guard let currentUser = Auth.auth().currentUser else {
-            throw NSError(domain: "AuthError", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is signed in"])
-        }
-        
-        return try await currentUser.getIDToken()
-    }
-    
+
     func updateUserDetails(username: String, firstName: String, lastName: String, age: Int, gender: String) async throws -> Bool {
         let idToken = try await getIDToken()
 
