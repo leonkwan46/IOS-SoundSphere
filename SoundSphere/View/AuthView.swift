@@ -1,17 +1,10 @@
 import SwiftUI
 import FirebaseAuth
 
-enum Role: String, CaseIterable, Identifiable {
-    case teacher = "Teacher"
-    case student = "Student"
-
-    var id: String { self.rawValue }
-}
-
 struct AuthView: View {
     @EnvironmentObject var AppViewModel: AppViewModel
     @StateObject var authViewModel = AuthViewModel()
-        
+
     var body: some View {
         VStack {
             Spacer()
@@ -19,24 +12,24 @@ struct AuthView: View {
             if !authViewModel.isLogin {
                 HStack {
                     Button(action: {
-                        authViewModel.role = .teacher
+                        authViewModel.userType = .teacher
                     }) {
                         Text("Teacher")
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(authViewModel.role == .teacher ? Color.blue : Color.gray.opacity(0.2))
-                            .foregroundColor(authViewModel.role == .teacher ? .white : .black)
+                            .background(authViewModel.userType == .teacher ? Color.blue : Color.gray.opacity(0.2))
+                            .foregroundColor(authViewModel.userType == .teacher ? .white : .black)
                             .cornerRadius(10)
                     }
 
                     Button(action: {
-                        authViewModel.role = .student
+                        authViewModel.userType = .student
                     }) {
                         Text("Student")
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(authViewModel.role == .student ? Color.blue : Color.gray.opacity(0.2))
-                            .foregroundColor(authViewModel.role == .student ? .white : .black)
+                            .background(authViewModel.userType == .student ? Color.blue : Color.gray.opacity(0.2))
+                            .foregroundColor(authViewModel.userType == .student ? .white : .black)
                             .cornerRadius(10)
                     }
                 }
@@ -99,7 +92,7 @@ struct AuthView: View {
         // print out all the properties
         print(authViewModel.email)
         print(authViewModel.password)
-        print(authViewModel.role)
+        print(authViewModel.userType)
                 
         defer {
             AppViewModel.isLoading = false

@@ -108,7 +108,7 @@ class authApi {
         }
     }
     
-    func register(email: String) async throws -> Bool {
+    func register(email: String, userType: UserType) async throws -> Bool {
         guard let currentUser = Auth.auth().currentUser else {
             throw FirebaseAuthError.unknown("No current user")
         }
@@ -120,7 +120,7 @@ class authApi {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(["email": email, "firebaseUserId": currentUser.uid])
+        request.httpBody = try JSONEncoder().encode(["email": email, "firebaseUserId": currentUser.uid, "userType": userType.rawValue])
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)

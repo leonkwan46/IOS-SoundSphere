@@ -13,7 +13,7 @@ class AuthViewModel: ObservableObject {
     @Published var errorMessage: String = ""
     @Published var isAuthenticated: Bool = false
 
-    @Published var role: Role = .student
+    @Published var userType: UserType = .student
     @Published var email: String = "admin@gmail.com"
     @Published var password: String = "admin123"
     @Published var confirmPassword: String = "admin123"
@@ -24,7 +24,7 @@ class AuthViewModel: ObservableObject {
             // Attempt Firebase registration
             let firstResult = try await authApi().registerWithFirebase(email: email, password: password)
             // If successful, proceed with backend registration
-            let secondResult = try await authApi().register(email: email)
+            let secondResult = try await authApi().register(email: email, userType: userType)
             
             self.isAuthenticated = true
 
@@ -36,7 +36,7 @@ class AuthViewModel: ObservableObject {
                 case .emailAlreadyInUse:
                     // Attempt backend registration if email is already in use
                     do {
-                        let secondResult = try await authApi().register(email: email)
+                        let secondResult = try await authApi().register(email: email, userType: userType)
                         self.isAuthenticated = true
 
                         return secondResult
