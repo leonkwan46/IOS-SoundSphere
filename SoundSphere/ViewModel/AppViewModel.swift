@@ -33,7 +33,7 @@ class AppViewModel: ObservableObject {
                     await MainActor.run {
                         // TODO: Should also fetch user details
                         if let displayName = user.displayName, !displayName.isEmpty {
-                            self.state = .login
+                            self.state = .home
                         } else {
                             self.state = .extraDetails
                         }
