@@ -10,77 +10,184 @@ import SwiftUI
 struct ExtraDetailsView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @StateObject var extraDetailsViewModel = ExtraDetailsViewModel()
+    @FocusState private var focusedField: Field?
+    @State private var isTransitioning = false
+    
+    enum Field: Hashable {
+        case username, firstName, lastName, age, gender
+    }
     
     var body: some View {
-        VStack {
-            TextField("Username", text: $extraDetailsViewModel.username)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-                .onChange(of: extraDetailsViewModel.username) { oldValue, newValue in
-                     Task {
-                         extraDetailsViewModel.checkUsernameAvailability()
-                     }
+        ZStack {
+            // Background gradient
+            AppTheme.darkGradient
+                .ignoresSafeArea()
+            
+            // Golden particles (small dots)
+            ForEach(0..<30) { index in
+                Circle()
+                    .fill(AppTheme.gold.opacity(Double.random(in: 0.05...0.15)))
+                    .frame(width: CGFloat.random(in: 2...5))
+                    .position(
+                        x: CGFloat.random(in: 0...UIScreen.main.bounds.width),
+                        y: CGFloat.random(in: 0...UIScreen.main.bounds.height)
+                    )
+                    .opacity(isTransitioning ? 0 : 1)
+            }
+            
+            // Content
+            ScrollView {
+                VStack(spacing: 25) {
+                    // Header
+                    VStack(spacing: 10) {
+                        Image(systemName: "person.crop.circle.badge.plus")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 80)
+                            .foregroundColor(AppTheme.gold)
+                            .shadow(color: AppTheme.gold.opacity(0.3), radius: 8, x: 0, y: 3)
+                        
+                        Text("Complete Your Profile")
+                            .font(AppTheme.titleStyle.font)
+                            .foregroundColor(AppTheme.titleStyle.color)
+                            .shadow(color: AppTheme.titleStyle.shadow ?? .clear, radius: 1, x: 0, y: 1)
+                        
+                        Text("Tell us a bit more about yourself")
+                            .font(AppTheme.subtitleStyle.font)
+                            .foregroundColor(AppTheme.subtitleStyle.color)
+                    }
+                    .padding(.top, 30)
+                    .padding(.bottom, 20)
                     
+                    // Form fields
+                    VStack(spacing: 16) {
+                        // Username field with availability indicator
+                        VStack(alignment: .leading, spacing: 4) {
+                            AppTextField(
+                                iconName: "person.fill",
+                                placeholder: "Username",
+                                text: $extraDetailsViewModel.username,
+                                error: extraDetailsViewModel.usernameError
+                            )
+                            .focused($focusedField, equals: .username)
+                            .submitLabel(.next)
+                            .onSubmit {
+                                focusedField = .firstName
+                            }
+                            .onChange(of: extraDetailsViewModel.username) { oldValue, newValue in
+                                Task {
+                                    extraDetailsViewModel.checkUsernameAvailability()
+                                }
+                            }
+                        }
+                        
+                        // First Name field
+                        AppTextField(
+                            iconName: "textformat.abc",
+                            placeholder: "First Name",
+                            text: $extraDetailsViewModel.firstName,
+                            error: extraDetailsViewModel.firstNameError
+                        )
+                        .focused($focusedField, equals: .firstName)
+                        .submitLabel(.next)
+                        .onSubmit {
+                            focusedField = .lastName
+                        }
+                        
+                        // Last Name field
+                        AppTextField(
+                            iconName: "textformat.abc",
+                            placeholder: "Last Name",
+                            text: $extraDetailsViewModel.lastName,
+                            error: extraDetailsViewModel.lastNameError
+                        )
+                        .focused($focusedField, equals: .lastName)
+                        .submitLabel(.next)
+                        .onSubmit {
+                            focusedField = .age
+                        }
+                        
+                        // Age field
+                        HStack {
+                            Image(systemName: "calendar")
+                                .foregroundColor(AppTheme.gold)
+                                .frame(width: 24)
+                            
+                            TextField("Age", value: $extraDetailsViewModel.age, formatter: NumberFormatter())
+                                .foregroundColor(.white)
+                                .keyboardType(.numberPad)
+                                .focused($focusedField, equals: .age)
+                                .submitLabel(.next)
+                                .onSubmit {
+                                    focusedField = .gender
+                                }
+                            
+                            Spacer()
+                        }
+                        .appFormFieldStyle(AppTheme.formFieldStyle)
+                        
+                        if let ageError = extraDetailsViewModel.ageError {
+                            Text(ageError)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.leading, 12)
+                                .transition(.opacity)
+                        }
+                        
+                        // Gender field with picker
+                        Menu {
+                            Button("Male") { extraDetailsViewModel.gender = "Male" }
+                            Button("Female") { extraDetailsViewModel.gender = "Female" }
+                            Button("Non-binary") { extraDetailsViewModel.gender = "Non-binary" }
+                            Button("Prefer not to say") { extraDetailsViewModel.gender = "Prefer not to say" }
+                        } label: {
+                            HStack {
+                                Image(systemName: "person.fill.questionmark")
+                                    .foregroundColor(AppTheme.gold)
+                                    .frame(width: 24)
+                                
+                                Text(extraDetailsViewModel.gender.isEmpty ? "Select Gender" : extraDetailsViewModel.gender)
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.down")
+                                    .foregroundColor(AppTheme.gold.opacity(0.7))
+                            }
+                            .appFormFieldStyle(AppTheme.formFieldStyle)
+                        }
+                        
+                        if let genderError = extraDetailsViewModel.genderError {
+                            Text(genderError)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.leading, 12)
+                                .transition(.opacity)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+                    // Submit button
+                    AppButton(
+                        title: "Complete Profile",
+                        icon: "checkmark.circle.fill"
+                    ) {
+                        focusedField = nil
+                        Task {
+                            await validateAndSubmit()
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+                    .padding(.bottom, 30)
                 }
-            if let usernameError = extraDetailsViewModel.usernameError {
-                Text(usernameError)
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-
-            TextField("First Name", text: $extraDetailsViewModel.firstName)
                 .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-            if let firstNameError = extraDetailsViewModel.firstNameError {
-                Text(firstNameError)
-                    .foregroundColor(.red)
-                    .font(.caption)
             }
-
-            TextField("Last Name", text: $extraDetailsViewModel.lastName)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-            if let lastNameError = extraDetailsViewModel.lastNameError {
-                Text(lastNameError)
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-
-            TextField("Age", value: $extraDetailsViewModel.age, formatter: NumberFormatter())
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-            if let ageError = extraDetailsViewModel.ageError {
-                Text(ageError)
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-
-            TextField("Gender", text: $extraDetailsViewModel.gender)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-            if let genderError = extraDetailsViewModel.genderError {
-                Text(genderError)
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-
-            Button("Update") {
-                Task {
-                    await validateAndSubmit()
-                }
-            }
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(10)
         }
-        .padding()
-
+        .opacity(isTransitioning ? 0 : 1)
+        .onTapGesture {
+            focusedField = nil
+        }
     }
     
     private func validateAndSubmit() async {
@@ -89,16 +196,81 @@ struct ExtraDetailsView: View {
         
         // Proceed with submission only if valid
         if isValid {
+            appViewModel.isLoading = true
+            
             do {
-                let result = try await extraDetailsViewModel.updateUserDetails(username: extraDetailsViewModel.username, firstName: extraDetailsViewModel.firstName, lastName: extraDetailsViewModel.lastName, age: extraDetailsViewModel.age, gender: extraDetailsViewModel.gender)
+                let result = try await extraDetailsViewModel.updateUserDetails(
+                    username: extraDetailsViewModel.username,
+                    firstName: extraDetailsViewModel.firstName,
+                    lastName: extraDetailsViewModel.lastName,
+                    age: extraDetailsViewModel.age,
+                    gender: extraDetailsViewModel.gender
+                )
                 
-                print("User details updated: \(result)")
                 if result {
-                    appViewModel.state = .home
+                    withAnimation(AppTheme.easeOutAnimation) {
+                        isTransitioning = true
+                    }
+                    
+                    // Small delay to allow transition animation to complete
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.transitionDuration) {
+                        appViewModel.state = .home
+                    }
                 }
             } catch {
                 // Handle any other errors that might arise during the update
                 print("Failed to update user details: \(error.localizedDescription)")
+            }
+            
+            appViewModel.isLoading = false
+        }
+    }
+}
+
+// MARK: - Supporting Views
+
+struct ProfileTextField: View {
+    let iconName: String
+    let placeholder: String
+    @Binding var text: String
+    var error: String?
+    let gradientColors: [Color]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Image(systemName: iconName)
+                    .foregroundColor(gradientColors[0])
+                    .frame(width: 24)
+                
+                TextField(placeholder, text: $text)
+                    .foregroundColor(.white)
+                    .autocapitalization(.none)
+                    .autocorrectionDisabled()
+                
+                if !text.isEmpty {
+                    Button(action: { text = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(gradientColors[0].opacity(0.7))
+                    }
+                }
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white.opacity(0.08)) // Reduced background opacity
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(gradientColors[0].opacity(0.2), lineWidth: 1) // Reduced border opacity
+                    )
+            )
+            
+            if let error = error {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.caption)
+                    .padding(.leading, 12)
+                    .transition(.opacity)
             }
         }
     }

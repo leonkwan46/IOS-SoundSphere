@@ -50,7 +50,6 @@ class userApi {
             if httpResponse.statusCode == 200 {
                 // Handle success
                 let user = try JSONDecoder().decode(User.self, from: data)
-                print(user)
                 return user
             } else {
                 // Parse the error response body
@@ -69,7 +68,7 @@ class userApi {
     func updateUserDetails(username: String, firstName: String, lastName: String, age: Int, gender: String) async throws -> Bool {
         let idToken = try await getIDToken()
 
-        guard let url = URL(string: "http://localhost:3000/users/update-user") else {
+        guard let url = URL(string: "http://localhost:3000/users/update-user-profile") else {
             throw URLError(.badURL)
         }
         

@@ -14,9 +14,9 @@ class AuthViewModel: ObservableObject {
     @Published var isAuthenticated: Bool = false
 
     @Published var userType: UserType = .student
-    @Published var email: String = "admin@gmail.com"
-    @Published var password: String = "admin123"
-    @Published var confirmPassword: String = "admin123"
+    @Published var email: String = "teacher1@example.com"
+    @Published var password: String = "teacher1"
+    @Published var confirmPassword: String = "teacher1"
     @Published var isLogin: Bool = true
     
     func createAccount(email: String, password: String) async throws -> Bool {
