@@ -12,6 +12,7 @@ struct ExtraDetailsView: View {
     @StateObject var extraDetailsViewModel = ExtraDetailsViewModel()
     @FocusState private var focusedField: Field?
     @State private var isTransitioning = false
+    @Environment(\.colorScheme) var colorScheme
     
     enum Field: Hashable {
         case username, firstName, lastName, age, gender
@@ -20,20 +21,11 @@ struct ExtraDetailsView: View {
     var body: some View {
         ZStack {
             // Background gradient
-            AppTheme.darkGradient
+            AppTheme.backgroundGradient(for: colorScheme)
                 .ignoresSafeArea()
             
-            // Golden particles (small dots)
-            ForEach(0..<30) { index in
-                Circle()
-                    .fill(AppTheme.gold.opacity(Double.random(in: 0.05...0.15)))
-                    .frame(width: CGFloat.random(in: 2...5))
-                    .position(
-                        x: CGFloat.random(in: 0...UIScreen.main.bounds.width),
-                        y: CGFloat.random(in: 0...UIScreen.main.bounds.height)
-                    )
-                    .opacity(isTransitioning ? 0 : 1)
-            }
+            // Golden particles
+            GoldenParticlesView(count: 30, isTransitioning: isTransitioning)
             
             // Content
             ScrollView {
@@ -48,13 +40,13 @@ struct ExtraDetailsView: View {
                             .shadow(color: AppTheme.gold.opacity(0.3), radius: 8, x: 0, y: 3)
                         
                         Text("Complete Your Profile")
-                            .font(AppTheme.titleStyle.font)
-                            .foregroundColor(AppTheme.titleStyle.color)
-                            .shadow(color: AppTheme.titleStyle.shadow ?? .clear, radius: 1, x: 0, y: 1)
+                            .font(AppTheme.titleStyle(for: colorScheme).font)
+                            .foregroundColor(AppTheme.titleStyle(for: colorScheme).color)
+                            .shadow(color: AppTheme.titleStyle(for: colorScheme).shadow ?? .clear, radius: 1, x: 0, y: 1)
                         
                         Text("Tell us a bit more about yourself")
-                            .font(AppTheme.subtitleStyle.font)
-                            .foregroundColor(AppTheme.subtitleStyle.color)
+                            .font(AppTheme.subtitleStyle(for: colorScheme).font)
+                            .foregroundColor(AppTheme.subtitleStyle(for: colorScheme).color)
                     }
                     .padding(.top, 30)
                     .padding(.bottom, 20)
@@ -114,7 +106,7 @@ struct ExtraDetailsView: View {
                                 .frame(width: 24)
                             
                             TextField("Age", value: $extraDetailsViewModel.age, formatter: NumberFormatter())
-                                .foregroundColor(.white)
+                                .foregroundColor(AppTheme.textColor(for: colorScheme))
                                 .keyboardType(.numberPad)
                                 .focused($focusedField, equals: .age)
                                 .submitLabel(.next)
@@ -124,7 +116,7 @@ struct ExtraDetailsView: View {
                             
                             Spacer()
                         }
-                        .appFormFieldStyle(AppTheme.formFieldStyle)
+                        .appFormFieldStyle(AppTheme.formFieldStyle(for: colorScheme))
                         
                         if let ageError = extraDetailsViewModel.ageError {
                             Text(ageError)
@@ -147,14 +139,14 @@ struct ExtraDetailsView: View {
                                     .frame(width: 24)
                                 
                                 Text(extraDetailsViewModel.gender.isEmpty ? "Select Gender" : extraDetailsViewModel.gender)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(AppTheme.textColor(for: colorScheme))
                                 
                                 Spacer()
                                 
                                 Image(systemName: "chevron.down")
                                     .foregroundColor(AppTheme.gold.opacity(0.7))
                             }
-                            .appFormFieldStyle(AppTheme.formFieldStyle)
+                            .appFormFieldStyle(AppTheme.formFieldStyle(for: colorScheme))
                         }
                         
                         if let genderError = extraDetailsViewModel.genderError {

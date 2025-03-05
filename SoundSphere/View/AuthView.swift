@@ -6,6 +6,7 @@ struct AuthView: View {
     @StateObject var authViewModel = AuthViewModel()
     @FocusState private var focusedField: Field?
     @State private var isTransitioning = false
+    @Environment(\.colorScheme) var colorScheme
     
     enum Field: Hashable {
         case email, password, confirmPassword
@@ -14,20 +15,11 @@ struct AuthView: View {
     var body: some View {
         ZStack {
             // Background gradient
-            AppTheme.darkGradient
+            AppTheme.backgroundGradient(for: colorScheme)
                 .ignoresSafeArea()
             
-            // Golden particles (small dots)
-            ForEach(0..<30) { index in
-                Circle()
-                    .fill(AppTheme.gold.opacity(Double.random(in: 0.05...0.15)))
-                    .frame(width: CGFloat.random(in: 2...5))
-                    .position(
-                        x: CGFloat.random(in: 0...UIScreen.main.bounds.width),
-                        y: CGFloat.random(in: 0...UIScreen.main.bounds.height)
-                    )
-                    .opacity(isTransitioning ? 0 : 1)
-            }
+            // Golden particles
+            GoldenParticlesView(count: 30, isTransitioning: isTransitioning)
             
             // Content
             ScrollView {
@@ -42,13 +34,13 @@ struct AuthView: View {
                             .shadow(color: AppTheme.gold.opacity(0.3), radius: 8, x: 0, y: 3)
                         
                         Text("SoundSphere")
-                            .font(AppTheme.titleStyle.font)
-                            .foregroundColor(AppTheme.titleStyle.color)
-                            .shadow(color: AppTheme.titleStyle.shadow ?? .clear, radius: 1, x: 0, y: 1)
+                            .font(AppTheme.titleStyle(for: colorScheme).font)
+                            .foregroundColor(AppTheme.titleStyle(for: colorScheme).color)
+                            .shadow(color: AppTheme.titleStyle(for: colorScheme).shadow ?? .clear, radius: 1, x: 0, y: 1)
                         
                         Text(authViewModel.isLogin ? "Welcome back!" : "Create your account")
-                            .font(AppTheme.subtitleStyle.font)
-                            .foregroundColor(AppTheme.subtitleStyle.color)
+                            .font(AppTheme.subtitleStyle(for: colorScheme).font)
+                            .foregroundColor(AppTheme.subtitleStyle(for: colorScheme).color)
                     }
                     .padding(.top, 40)
                     .padding(.bottom, 20)
@@ -140,7 +132,7 @@ struct AuthView: View {
                     // Toggle between login and signup
                     HStack {
                         Text(authViewModel.isLogin ? "Don't have an account?" : "Already have an account?")
-                            .foregroundColor(AppTheme.subtitleStyle.color)
+                            .foregroundColor(AppTheme.subtitleStyle(for: colorScheme).color)
                         
                         Button(action: {
                             withAnimation {
@@ -257,6 +249,7 @@ struct UserTypeButton: View {
     let systemImage: String
     let isSelected: Bool
     let action: () -> Void
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         Button(action: action) {
@@ -270,12 +263,12 @@ struct UserTypeButton: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 15)
-            .background(isSelected ? AppTheme.gold : Color.white.opacity(0.1))
-            .foregroundColor(isSelected ? .white : .white)
+            .background(isSelected ? AppTheme.gold : AppTheme.secondaryBackgroundColor(for: colorScheme))
+            .foregroundColor(isSelected ? .white : AppTheme.textColor(for: colorScheme))
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? AppTheme.gold : Color.white.opacity(0.3), lineWidth: 1)
+                    .stroke(isSelected ? AppTheme.gold : AppTheme.gold.opacity(0.3), lineWidth: 1)
             )
         }
     }
