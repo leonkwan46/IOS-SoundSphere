@@ -8,55 +8,109 @@ enum AppTheme {
     static let goldenRod = Color(hex: "DAA520")
     static let lemonChiffon = Color(hex: "FFFACD")
     
-    // Background colors
+    // Light theme colors
+    static let lightBackground = Color(hex: "F8F9FF")  // Soft blue-white
+    static let lightBackgroundSecondary = Color(hex: "FFFFFF")  // Pure white
+    static let lightAccent = Color(hex: "E8ECFF")  // Very light blue
+    static let lightText = Color(hex: "2D3436")  // Dark gray
+    static let lightTextSecondary = Color(hex: "636E72")  // Medium gray
+    
+    // Dark theme colors
     static let darkBackground = Color(hex: "1A1A1A")
     static let darkBackgroundSecondary = Color(hex: "2D2D2D")
+    static let darkText = Color(hex: "FFFFFF")
+    static let darkTextSecondary = Color(hex: "CCCCCC")
     
-    // Gradients
-    static let goldGradient = LinearGradient(
-        colors: [
-            gold.opacity(0.8),
-            darkGold.opacity(0.8)
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    // Dynamic colors based on color scheme
+    static func backgroundColor(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? darkBackground : lightBackground
+    }
     
-    static let darkGradient = LinearGradient(
-        colors: [
-            darkBackground,
-            darkBackgroundSecondary
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    static func secondaryBackgroundColor(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? darkBackgroundSecondary : lightBackgroundSecondary
+    }
+    
+    static func textColor(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? darkText : lightText
+    }
+    
+    static func secondaryTextColor(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? darkTextSecondary : lightTextSecondary
+    }
+    
+    // Dynamic gradients based on color scheme
+    static func backgroundGradient(for colorScheme: ColorScheme) -> LinearGradient {
+        if colorScheme == .dark {
+            return LinearGradient(
+                colors: [
+                    darkBackground,
+                    darkBackgroundSecondary
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        } else {
+            return LinearGradient(
+                colors: [
+                    lightBackground,
+                    lightAccent,
+                    lightBackgroundSecondary
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+    }
     
     // Text styles
-    static let titleStyle = TextStyle(
-        font: .system(size: 32, weight: .bold, design: .rounded),
-        color: .white,
-        shadow: gold.opacity(0.4)
-    )
+    static func titleStyle(for colorScheme: ColorScheme) -> TextStyle {
+        TextStyle(
+            font: .system(size: 32, weight: .bold, design: .rounded),
+            color: textColor(for: colorScheme),
+            shadow: colorScheme == .dark ? gold.opacity(0.4) : nil
+        )
+    }
     
-    static let subtitleStyle = TextStyle(
-        font: .system(size: 16, weight: .medium),
-        color: lemonChiffon.opacity(0.9)
-    )
+    static func subtitleStyle(for colorScheme: ColorScheme) -> TextStyle {
+        TextStyle(
+            font: .system(size: 16, weight: .medium),
+            color: secondaryTextColor(for: colorScheme)
+        )
+    }
     
     // Button styles
-    static let primaryButtonStyle = ButtonStyle(
-        background: goldGradient,
-        foregroundColor: .white,
-        cornerRadius: 15,
-        shadow: gold.opacity(0.3)
-    )
+    static func primaryButtonStyle(for colorScheme: ColorScheme) -> ButtonStyle {
+        ButtonStyle(
+            background: LinearGradient(
+                colors: [
+                    gold.opacity(0.8),
+                    darkGold.opacity(0.8)
+                ],
+                startPoint: .leading,
+                endPoint: .trailing
+            ),
+            foregroundColor: .white,
+            cornerRadius: 15,
+            shadow: gold.opacity(0.3)
+        )
+    }
     
     // Form field styles
-    static let formFieldStyle = FormFieldStyle(
-        background: Color.white.opacity(0.08),
-        border: gold.opacity(0.2),
-        cornerRadius: 12
-    )
+    static func formFieldStyle(for colorScheme: ColorScheme) -> FormFieldStyle {
+        if colorScheme == .dark {
+            return FormFieldStyle(
+                background: Color.white.opacity(0.08),
+                border: gold.opacity(0.2),
+                cornerRadius: 12
+            )
+        } else {
+            return FormFieldStyle(
+                background: Color.white,
+                border: lightAccent,
+                cornerRadius: 12
+            )
+        }
+    }
     
     // Animation durations
     static let transitionDuration: Double = 0.5
@@ -139,6 +193,7 @@ struct AppTextField: View {
     let placeholder: String
     @Binding var text: String
     var error: String?
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -148,7 +203,7 @@ struct AppTextField: View {
                     .frame(width: 24)
                 
                 TextField(placeholder, text: $text)
-                    .foregroundColor(.white)
+                    .foregroundColor(AppTheme.textColor(for: colorScheme))
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
                 
@@ -159,7 +214,7 @@ struct AppTextField: View {
                     }
                 }
             }
-            .appFormFieldStyle(AppTheme.formFieldStyle)
+            .appFormFieldStyle(AppTheme.formFieldStyle(for: colorScheme))
             
             if let error = error {
                 Text(error)
@@ -177,6 +232,7 @@ struct AppSecureField: View {
     let placeholder: String
     @Binding var text: String
     @State private var isSecured: Bool = true
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack {
@@ -186,12 +242,12 @@ struct AppSecureField: View {
             
             if isSecured {
                 SecureField(placeholder, text: $text)
-                    .foregroundColor(.white)
+                    .foregroundColor(AppTheme.textColor(for: colorScheme))
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
             } else {
                 TextField(placeholder, text: $text)
-                    .foregroundColor(.white)
+                    .foregroundColor(AppTheme.textColor(for: colorScheme))
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
             }
@@ -201,7 +257,7 @@ struct AppSecureField: View {
                     .foregroundColor(AppTheme.gold.opacity(0.7))
             }
         }
-        .appFormFieldStyle(AppTheme.formFieldStyle)
+        .appFormFieldStyle(AppTheme.formFieldStyle(for: colorScheme))
     }
 }
 
@@ -209,6 +265,7 @@ struct AppButton: View {
     let title: String
     let icon: String?
     let action: () -> Void
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         Button(action: action) {
@@ -222,6 +279,6 @@ struct AppButton: View {
                 }
             }
         }
-        .appButtonStyle(AppTheme.primaryButtonStyle)
+        .appButtonStyle(AppTheme.primaryButtonStyle(for: colorScheme))
     }
 } 

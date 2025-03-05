@@ -9,24 +9,16 @@ struct SplashView: View {
     @State private var showTagline = false
     @State private var musicBars: [CGFloat] = [0.2, 0.4, 0.6, 0.8, 0.6, 0.4, 0.2]
     @State private var isTransitioning = false
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         ZStack {
             // Background gradient
-            AppTheme.darkGradient
+            AppTheme.backgroundGradient(for: colorScheme)
                 .ignoresSafeArea()
             
-            // Golden particles (small dots)
-            ForEach(0..<30) { index in
-                Circle()
-                    .fill(AppTheme.gold.opacity(Double.random(in: 0.1...0.3)))
-                    .frame(width: CGFloat.random(in: 2...5))
-                    .position(
-                        x: CGFloat.random(in: 0...UIScreen.main.bounds.width),
-                        y: CGFloat.random(in: 0...UIScreen.main.bounds.height)
-                    )
-                    .opacity(isTransitioning ? 0 : 1)
-            }
+            // Golden particles
+            GoldenParticlesView(count: 30, isTransitioning: isTransitioning)
             
             // Sound waves animation
             ZStack {
@@ -67,7 +59,7 @@ struct SplashView: View {
                     
                     // Inner circle for depth
                     Circle()
-                        .fill(AppTheme.darkBackgroundSecondary)
+                        .fill(AppTheme.secondaryBackgroundColor(for: colorScheme))
                         .frame(width: 100, height: 100)
                     
                     // Music equalizer bars
@@ -96,7 +88,7 @@ struct SplashView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 50, height: 50)
-                        .foregroundColor(.white)
+                        .foregroundColor(AppTheme.textColor(for: colorScheme))
                         .rotationEffect(.degrees(rotationAngle))
                         .opacity(0.9)
                         .shadow(color: AppTheme.gold.opacity(0.5), radius: 5, x: 0, y: 0)
@@ -108,16 +100,16 @@ struct SplashView: View {
                 
                 // App name
                 Text("SoundSphere")
-                    .font(AppTheme.titleStyle.font)
-                    .foregroundColor(AppTheme.titleStyle.color)
-                    .shadow(color: AppTheme.titleStyle.shadow ?? .clear, radius: 2, x: 0, y: 1)
+                    .font(AppTheme.titleStyle(for: colorScheme).font)
+                    .foregroundColor(AppTheme.titleStyle(for: colorScheme).color)
+                    .shadow(color: AppTheme.titleStyle(for: colorScheme).shadow ?? .clear, radius: 2, x: 0, y: 1)
                     .opacity(showAppName ? (isTransitioning ? 0 : 1) : 0)
                     .offset(y: showAppName ? 0 : 20)
                 
                 // Tagline
                 Text("Your musical journey begins here")
-                    .font(AppTheme.subtitleStyle.font)
-                    .foregroundColor(AppTheme.subtitleStyle.color)
+                    .font(AppTheme.subtitleStyle(for: colorScheme).font)
+                    .foregroundColor(AppTheme.subtitleStyle(for: colorScheme).color)
                     .opacity(showTagline ? (isTransitioning ? 0 : 1) : 0)
                     .offset(y: showTagline ? 0 : 10)
                 
@@ -192,6 +184,7 @@ struct GoldenMusicBar: View {
     let delay: Double
     let isTransitioning: Bool
     @State private var height: CGFloat = 0.1
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         RoundedRectangle(cornerRadius: 2)
