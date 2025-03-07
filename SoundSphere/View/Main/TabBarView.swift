@@ -40,6 +40,16 @@ struct TabBarView: View {
                         }
                         .tag(AppRouter.TabTag.home)
                     
+                    // Notifications tab
+                    Text("Notifications")
+                        .tabItem {
+                            VStack(spacing: 10) {
+                                Image(systemName: "bell")
+                                Text("NOTIFICATIONS")
+                            }
+                        }
+                        .tag(AppRouter.TabTag.notifications)
+                    
                     // Settings tab
                     SettingsView()
                         .tabItem {
