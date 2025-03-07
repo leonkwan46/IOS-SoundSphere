@@ -13,6 +13,7 @@ struct ExtraDetailsView: View {
     @FocusState private var focusedField: Field?
     @State private var isTransitioning = false
     @Environment(\.colorScheme) var colorScheme
+    @State private var usernameDebounceTask: Task<Void, Never>?
     
     enum Field: Hashable {
         case username, firstName, lastName, age, gender
@@ -67,8 +68,22 @@ struct ExtraDetailsView: View {
                                 focusedField = .firstName
                             }
                             .onChange(of: extraDetailsViewModel.username) { oldValue, newValue in
-                                Task {
-                                    extraDetailsViewModel.checkUsernameAvailability()
+                                // Cancel any existing debounce task
+                                usernameDebounceTask?.cancel()
+                                
+                                // Create a new debounce task
+                                usernameDebounceTask = Task {
+                                    // Wait for 500ms of no typing
+                                    try? await Task.sleep(nanoseconds: 500_000_000)
+                                    
+                                    // Check if the task was cancelled
+                                    if !Task.isCancelled {
+                                        await MainActor.run {
+                                            Task {
+                                                extraDetailsViewModel.checkUsernameAvailability()
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
