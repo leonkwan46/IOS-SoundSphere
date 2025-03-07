@@ -20,28 +20,15 @@ struct TabBarView: View {
         NavigationStack {
             TabView(selection: $appRouter.selectedTabTag) {
                 Group {
-                    // Profile tab
-                    ScrollView {
-                        Text("Profile")
-                            .padding()
-                        
-                        NavigationLink(destination: SettingsView()) {
-                            Text("Settings")
-                                .padding()
+                    // Contact tab
+                    ContactView()
+                        .tabItem {
+                            VStack(spacing: 10) {
+                                Image(systemName: "person.2")
+                                Text("CONTACTS")
+                            }
                         }
-                    }
-                    .refreshable {
-                        // TODO: Refetch user details
-                        // Mocking API call: Delay for 2 seconds
-                        try? await Task.sleep(nanoseconds: 2_000_000_000)
-                    }
-                    .tabItem {
-                        VStack(spacing: 10) {
-                            Image(systemName: "person")
-                            Text("PROFILE")
-                        }
-                    }
-                    .tag(AppRouter.TabTag.profile)
+                        .tag(AppRouter.TabTag.profile)
                     
                     // Home tab
                     HomeView(userViewModel: userViewModel)
