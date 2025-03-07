@@ -20,26 +20,30 @@ struct TabBarView: View {
         NavigationStack {
             TabView(selection: $appRouter.selectedTabTag) {
                 Group {
-                    // TODO: Add more tabs
+                    // Profile tab
                     ScrollView {
                         Text("Profile")
                             .padding()
                         
-                        Text("Settings")
-                            .padding()
+                        NavigationLink(destination: SettingsView()) {
+                            Text("Settings")
+                                .padding()
+                        }
                     }
                     .refreshable {
                         // TODO: Refetch user details
                         // Mocking API call: Delay for 2 seconds
                         try? await Task.sleep(nanoseconds: 2_000_000_000)
                     }
-                        .tabItem {
-                            VStack(spacing: 10) {
-                                Image(systemName: "person")
-                                Text("CONTACT")
-                            }
+                    .tabItem {
+                        VStack(spacing: 10) {
+                            Image(systemName: "person")
+                            Text("PROFILE")
                         }
-                        .tag(AppRouter.TabTag.profile)
+                    }
+                    .tag(AppRouter.TabTag.profile)
+                    
+                    // Home tab
                     HomeView(userViewModel: userViewModel)
                         .tabItem {
                             VStack(spacing: 10) {
@@ -48,20 +52,13 @@ struct TabBarView: View {
                             }
                         }
                         .tag(AppRouter.TabTag.home)
-                    // TODO: Add more tabs
-                    ScrollView {
-                        Text("ANOTHER PAGE")
-                            .padding()
-                    }
-                    .refreshable {
-                        // TODO: Refetch user details
-                        // Mocking API call: Delay for 2 seconds
-                        try? await Task.sleep(nanoseconds: 2_000_000_000)
-                    }
+                    
+                    // Settings tab
+                    SettingsView()
                         .tabItem {
                             VStack(spacing: 10) {
-                                Image(systemName: "bell")
-                                Text("ANOTHER")
+                                Image(systemName: "gear")
+                                Text("SETTINGS")
                             }
                         }
                         .tag(AppRouter.TabTag.settings)
