@@ -18,7 +18,7 @@ struct HomeView: View {
                     .font(.largeTitle)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
-                Text("You've got \(userViewModel.user?.id ?? 0) tasks to do!")
+                Text("You've got \(userViewModel.user?.firebaseId ?? "") tasks to do!")
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
                 
@@ -37,22 +37,15 @@ struct HomeView: View {
             .padding()
         }
         .refreshable {
-            // TODO: Refetch user details
-            // Mocking API call: Delay for 2 seconds
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            await refreshPage()
         }
     }
     
-    // Maybe we should do it in TabBarView instead (NO, each screen might have different API call)
-//    private func refreshPage() async {
-//        let idToken = Auth.auth().currentUser?.uid ?? ""
-//        do {
-//            let user = try await userViewModel.fetchUser(idToken: idToken)
-//            print(user)
-//        } catch {
-//            print(error)
-//        }
-//    }
+   private func refreshPage() async {
+       Task {
+           let _ = try await userViewModel.fetchUser()
+       }
+   }
 }
 
 #Preview {

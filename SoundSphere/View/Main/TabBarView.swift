@@ -52,7 +52,9 @@ struct TabBarView: View {
                 }
             }
         }.onAppear() {
-            // TODO: Fetch user details
+            Task {
+                let _ = try await userViewModel.fetchUser()
+            }
         }
     }
 }

@@ -14,11 +14,14 @@ enum UserType: String, Decodable {
 }
 
 struct User: Decodable {
-    let id: Int
+    let firebaseId: String
     let email: String
+    let username: String
     let userType: UserType
-    let isActive: Bool
-    let isDeleted: Bool
+    let firstName: String
+    let lastName: String
+    let age: Int
+    let gender: String
 }
 
 struct AuthTokenResult: Decodable {

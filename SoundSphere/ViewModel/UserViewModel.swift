@@ -11,7 +11,9 @@ import SwiftUI
 class UserViewModel: ObservableObject {
     @Published var user: User? = nil
     
-    func fetchUser(idToken: String) async throws -> User {
-        return try await userApi().fetchUserData()
+    func fetchUser() async throws -> User {
+        let user = try await userApi().fetchUserData()
+        self.user = user
+        return user
     }
 }

@@ -54,7 +54,7 @@ class userApi {
             } else {
                 // Parse the error response body
                 if let errorMessage = try? JSONDecoder().decode([String: String].self, from: data),
-                   let errorDescription = errorMessage["error"] {
+                let errorDescription = errorMessage["error"] {
                     print("Server error: \(errorDescription)")
                     throw CustomError.serverError(errorDescription)
                 } else {
