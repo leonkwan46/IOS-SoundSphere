@@ -3,6 +3,7 @@ import FirebaseAuth
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var appViewModel: AppViewModel
     @State private var showingLogoutAlert = false
     
     var body: some View {
@@ -54,7 +55,7 @@ struct SettingsView: View {
                 Button("Logout", role: .destructive) {
                     do {
                         try Auth.auth().signOut()
-                        dismiss()
+                        appViewModel.state = .login
                     } catch {
                         print("Error signing out: \(error.localizedDescription)")
                     }
@@ -68,4 +69,5 @@ struct SettingsView: View {
 
 #Preview {
     SettingsView()
+        .environmentObject(AppViewModel())
 } 
