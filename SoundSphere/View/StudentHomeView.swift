@@ -12,3 +12,7 @@ struct StudentHomeView: View {
         Text("Hello, STUDENT!")
     }
 }
+
+#Preview {
+    StudentHomeView()
+}

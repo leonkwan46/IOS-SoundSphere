@@ -273,3 +273,8 @@ struct UserTypeButton: View {
         }
     }
 }
+
+#Preview {
+    AuthView()
+        .environmentObject(AppViewModel())
+}

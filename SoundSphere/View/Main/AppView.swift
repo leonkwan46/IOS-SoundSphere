@@ -57,3 +57,7 @@ struct AppView: View {
         .environmentObject(appRouter)
     }
 }
+
+#Preview {
+    AppView()
+}

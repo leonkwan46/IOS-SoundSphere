@@ -218,3 +218,8 @@ struct ExtraDetailsView: View {
         }
     }
 }
+
+#Preview {
+    ExtraDetailsView()
+        .environmentObject(AppViewModel())
+}
