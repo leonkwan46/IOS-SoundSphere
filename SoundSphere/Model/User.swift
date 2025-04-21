@@ -13,15 +13,19 @@ enum UserType: String, Decodable {
     case admin = "admin"
 }
 
+struct UserProfile: Decodable {
+    let firstName: String
+    let lastName: String
+    let age: Int
+    let gender: String
+}
+
 struct User: Decodable {
     let firebaseId: String
     let email: String
     let username: String
     let userType: UserType
-    let firstName: String
-    let lastName: String
-    let age: Int
-    let gender: String
+    let profile: UserProfile
 }
 
 struct AuthTokenResult: Decodable {

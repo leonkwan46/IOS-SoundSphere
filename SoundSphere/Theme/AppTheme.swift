@@ -185,6 +185,16 @@ extension View {
     func appFormFieldStyle(_ style: FormFieldStyle) -> some View {
         modifier(AppFormFieldStyle(style: style))
     }
+    
+    func appSheetStyle(colorScheme: ColorScheme) -> some View {
+        self
+            .background(AppTheme.backgroundColor(for: colorScheme))
+            .presentationBackground(AppTheme.backgroundColor(for: colorScheme))
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(20)
+            .presentationBackgroundInteraction(.enabled)
+    }
 }
 
 // MARK: - Reusable Components
@@ -280,5 +290,30 @@ struct AppButton: View {
             }
         }
         .appButtonStyle(AppTheme.primaryButtonStyle(for: colorScheme))
+    }
+}
+
+// MARK: - UIKit Extensions
+extension UIColor {
+    convenience init(_ color: Color) {
+        let components = color.components()
+        self.init(red: components.r, green: components.g, blue: components.b, alpha: components.a)
+    }
+}
+
+extension Color {
+    func components() -> (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
+        let scanner = Scanner(string: self.description.trimmingCharacters(in: CharacterSet.alphanumerics.inverted))
+        var hexNumber: UInt64 = 0
+        var r: CGFloat = 0.0, g: CGFloat = 0.0, b: CGFloat = 0.0, a: CGFloat = 1.0
+        
+        let result = scanner.scanHexInt64(&hexNumber)
+        if result {
+            r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
+            g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
+            b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
+            a = CGFloat(hexNumber & 0x000000ff) / 255
+        }
+        return (r, g, b, a)
     }
 } 

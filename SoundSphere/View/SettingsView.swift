@@ -9,6 +9,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
+                // Logout Section
                 Section {
                     Button(role: .destructive) {
                         showingLogoutAlert = true
@@ -20,6 +21,7 @@ struct SettingsView: View {
                     }
                 }
                 
+                // Account & Preferences Section
                 Section {
                     NavigationLink {
                         Text("Account Settings")
@@ -40,6 +42,7 @@ struct SettingsView: View {
                     }
                 }
                 
+                // Version Info Section
                 Section {
                     HStack {
                         Label("Version", systemImage: "info.circle")
@@ -52,17 +55,19 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .alert("Logout", isPresented: $showingLogoutAlert) {
                 Button("Cancel", role: .cancel) { }
-                Button("Logout", role: .destructive) {
-                    do {
-                        try Auth.auth().signOut()
-                        appViewModel.state = .login
-                    } catch {
-                        print("Error signing out: \(error.localizedDescription)")
-                    }
-                }
+                Button("Logout", role: .destructive, action: logout)
             } message: {
                 Text("Are you sure you want to logout?")
             }
+        }
+    }
+    
+    private func logout() {
+        do {
+            try Auth.auth().signOut()
+            appViewModel.checkAuthentication()
+        } catch {
+            print("⚠️ Error signing out: \(error.localizedDescription)")
         }
     }
 }
@@ -70,4 +75,4 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .environmentObject(AppViewModel())
-} 
+}

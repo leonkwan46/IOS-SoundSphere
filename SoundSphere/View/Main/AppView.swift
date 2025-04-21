@@ -9,14 +9,17 @@ import Foundation
 import SwiftUI
 
 struct AppView: View {
+    @Environment(\.colorScheme) var colorScheme
     @StateObject var appViewModel = AppViewModel()
-
     // Bottom Nav after authentication
     @StateObject var appRouter = AppRouter()
     @State private var isTransitioning = false
 
     var body: some View {
         ZStack {
+            AppTheme.backgroundColor(for: colorScheme)
+                .ignoresSafeArea()
+
             VStack {
                 switch appViewModel.state {
                     case .login:

@@ -5,8 +5,13 @@ struct GoldenParticlesView: View {
     let isTransitioning: Bool
     @Environment(\.colorScheme) var colorScheme
     
+    // Create an array of identifiable particles
+    private var particles: [ParticleItem] {
+        (0..<count).map { ParticleItem(id: $0) }
+    }
+    
     var body: some View {
-        ForEach(0..<count) { index in
+        ForEach(particles) { particle in
             Circle()
                 .fill(AppTheme.gold.opacity(colorScheme == .dark ? 
                     Double.random(in: 0.05...0.15) : 
@@ -20,6 +25,11 @@ struct GoldenParticlesView: View {
                 .opacity(isTransitioning ? 0 : 1)
         }
     }
+}
+
+// Helper struct to make particles identifiable
+struct ParticleItem: Identifiable {
+    let id: Int
 }
 
 #Preview {

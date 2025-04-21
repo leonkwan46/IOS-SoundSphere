@@ -79,9 +79,7 @@ struct ExtraDetailsView: View {
                                     // Check if the task was cancelled
                                     if !Task.isCancelled {
                                         await MainActor.run {
-                                            Task {
-                                                extraDetailsViewModel.checkUsernameAvailability()
-                                            }
+                                            extraDetailsViewModel.checkUsernameAvailability()
                                         }
                                     }
                                 }

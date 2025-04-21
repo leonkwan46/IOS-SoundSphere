@@ -9,19 +9,17 @@ import SwiftUI
 import FirebaseAuth
 
 struct TabBarView: View {
+    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var appRouter: AppRouter
     @StateObject var userViewModel = UserViewModel()
+    @StateObject var contactViewModel = ContactViewModel()
     
-    init () {
-        _userViewModel = StateObject(wrappedValue: UserViewModel())
-    }
-
     var body: some View {
         NavigationStack {
             TabView(selection: $appRouter.selectedTabTag) {
                 Group {
                     // Contact tab
-                    ContactView()
+                    ContactView(contactViewModel: contactViewModel, userViewModel: userViewModel)
                         .tabItem {
                             VStack(spacing: 10) {
                                 Image(systemName: "person.2")
@@ -65,6 +63,8 @@ struct TabBarView: View {
             Task {
                 let _ = try await userViewModel.fetchUser()
             }
+        }.background() {
+            AppTheme.backgroundColor(for: colorScheme)
         }
     }
 }

@@ -11,6 +11,8 @@ import SwiftUI
 @main
 struct SoundSphereApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject var contactViewModel = ContactViewModel()
+    @StateObject var userViewModel = UserViewModel()
 
     var body: some Scene {
         WindowGroup {

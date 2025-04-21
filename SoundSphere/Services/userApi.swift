@@ -19,7 +19,7 @@ enum UserError: Error {
 }
 
 class userApi {
-    private func getIDToken() async throws -> String {
+    func getIDToken() async throws -> String {
         guard let currentUser = Auth.auth().currentUser else {
             throw NSError(domain: "AuthError", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is signed in"])
         }
