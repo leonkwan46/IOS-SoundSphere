@@ -7,9 +7,7 @@ SoundSphere is a modern iOS application built with SwiftUI that provides an imme
 - Modern SwiftUI-based user interface
 - MVVM architecture for clean separation of concerns
 - Modular design with reusable components
-- Custom theming support
-- Navigation system
-- Audio services integration
+- Audio services integration (future feature)
 
 ## Project Structure
 
@@ -34,21 +32,6 @@ SoundSphere/
 - Xcode 13.0+
 - Swift 5.5+
 
-## Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/SoundSphere.git
-```
-
-2. Open the project in Xcode:
-```bash
-cd SoundSphere
-open SoundSphere.xcodeproj
-```
-
-3. Build and run the project in Xcode
-
 ## Architecture
 
 The app follows the MVVM (Model-View-ViewModel) architecture pattern:
@@ -64,13 +47,3 @@ The app follows the MVVM (Model-View-ViewModel) architecture pattern:
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- SwiftUI framework
-- iOS development community
-- Contributors and maintainers 
