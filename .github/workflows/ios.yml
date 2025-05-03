@@ -1,59 +1,44 @@
-name: iOS CI Build
+name: Build, Test and Run App in Simulator
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
     name: Build, Test and Run App in Simulator
-    runs-on: macos-13
+    runs-on: macos-13  # Use the latest macOS runner with available Xcode
 
     steps:
-      - name: Set up Xcode
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Xcode 15.2
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '15.2'
 
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Select Xcode version
-        run: sudo xcode-select -s /Applications/Xcode_15.2.app
-
-      - name: Set Default Scheme
+      - name: Install dependencies (if needed)
         run: |
-          scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
-          echo $default > default
-          echo "Using default scheme: $default"
+          # e.g., install CocoaPods or dependencies
+          # pod install
+          # npm install, etc.
 
-      - name: Build .app for Simulator
+      - name: Build the project
         run: |
-          scheme=$(cat default)
-          file_to_build=$(ls *.xcworkspace 2>/dev/null || ls *.xcodeproj)
-          file_flag="workspace"
-          if [[ $file_to_build == *.xcodeproj ]]; then file_flag="project"; fi
+          xcodebuild -scheme "SoundSphere" -project "SoundSphere.xcodeproj" -destination 'platform=iOS Simulator,name=iPhone 14' build
 
-          xcodebuild -scheme "$scheme" \
-            -"$file_flag" "$file_to_build" \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
-            -derivedDataPath build
-
-      - name: Boot simulator and install + launch app
+      - name: Run Tests
         run: |
-          UDID=$(xcrun simctl list devices available | grep 'iPhone 15 (' | head -n1 | awk -F '[()]' '{print $2}')
-          xcrun simctl boot "$UDID" || echo "Simulator already booted"
+          xcodebuild test -scheme "SoundSphere" -project "SoundSphere.xcodeproj" -destination 'platform=iOS Simulator,name=iPhone 14'
 
-          APP_PATH=$(find build/Build/Products/Debug-iphonesimulator -name "*.app" | head -n1)
-          echo "Installing app: $APP_PATH"
-          xcrun simctl install "$UDID" "$APP_PATH"
-
-          # Replace with your app's actual bundle identifier
-          BUNDLE_ID=$(defaults read "$APP_PATH/Info.plist" CFBundleIdentifier)
-          echo "Launching app with bundle ID: $BUNDLE_ID"
-          xcrun simctl launch "$UDID" "$BUNDLE_ID"
+      - name: Run App in Simulator
+        run: |
+          # Run the app on the simulator
+          xcrun simctl boot "iPhone 14"
+          xcrun simctl install booted ./build/Build/Products/Debug-iphonesimulator/SoundSphere.app
+          xcrun simctl launch booted com.yourcompany.SoundSphere
