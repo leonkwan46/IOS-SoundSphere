@@ -9,9 +9,14 @@ on:
 jobs:
   build:
     name: Build, Test and Run App in Simulator
-    runs-on: macos-13 # or macos-latest
+    runs-on: macos-13
 
     steps:
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.3'
+
       - name: Checkout
         uses: actions/checkout@v4
 
