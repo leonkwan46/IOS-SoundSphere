@@ -30,12 +30,6 @@ SoundSphere/
 └── Assets.xcassets # App assets and resources
 ```
 
-## Requirements
-
-- iOS 15.0+
-- Xcode 13.0+
-- Swift 5.5+
-
 ## Architecture
 
 The app follows the MVVM (Model-View-ViewModel) architecture pattern:
@@ -43,11 +37,3 @@ The app follows the MVVM (Model-View-ViewModel) architecture pattern:
 - **Views**: SwiftUI views in the View directory
 - **ViewModels**: Business logic and state management in the ViewModel directory
 - **Models**: Data models and entities in the Model directory
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
