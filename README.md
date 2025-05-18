@@ -2,6 +2,10 @@
 
 SoundSphere is a modern iOS application built with SwiftUI that provides an immersive audio experience. The app follows the MVVM (Model-View-ViewModel) architecture pattern and is designed with a clean, modular structure.
 
+# ⚠️ Project Status  
+> **🚨 Important:**  
+> I've decided to pivot away from the SoundSphere iOS app. While the initial idea was to leverage SwiftUI for a polished, native experience, I've realised that my priority is to ship the product faster, which requires focusing on familiar technologies rather than learning a new stack. This will allow me to deliver value to users more quickly and iterate on feedback efficiently.
+
 ## Features
 
 - Modern SwiftUI-based user interface
